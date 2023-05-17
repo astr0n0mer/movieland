@@ -34,7 +34,12 @@ export default function App() {
           searchMovies(e.target.elements.searchTerm.value);
         }}
       >
-        <input type="text" name="searchTerm" placeholder="Search for movies" />
+        <input
+          type="text"
+          name="searchTerm"
+          placeholder="Search for movies"
+          autoFocus
+        />
         <button type="submit">
           <img src={SearchIcon} alt="Search" />
         </button>

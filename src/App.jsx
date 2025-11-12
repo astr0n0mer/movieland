@@ -4,14 +4,14 @@ import "./App.css";
 
 import MovieCard from "./components/MovieCard";
 
-const API_URL = `https://www.omdbapi.com/?apikey=${import.meta.env.VITE_API_KEY
-	}`;
+const API_URL = `https://www.omdbapi.com/?apikey=${import.meta.env.VITE_API_KEY}`;
+const DEFAULT_MOVIE_TITLE = "batman"
 
 export default function App() {
 	const [movies, setMovies] = useState([]);
 	const [searchTerm, setSearchTerm] = useState(() => {
 		const searchParams = new URLSearchParams(window.location.search);
-		return searchParams.get("q") || "one piece";
+		return searchParams.get("q") || DEFAULT_MOVIE_TITLE;
 	});
 
 	useEffect(() => {

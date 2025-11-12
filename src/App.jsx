@@ -4,64 +4,75 @@ import "./App.css";
 
 import MovieCard from "./components/MovieCard";
 
-const API_URL = `https://www.omdbapi.com/?apikey=${
-  import.meta.env.VITE_API_KEY
-}`;
+const API_URL = `https://www.omdbapi.com/?apikey=${import.meta.env.VITE_API_KEY
+	}`;
 
 export default function App() {
-  const [movies, setMovies] = useState([]);
+	const [movies, setMovies] = useState([]);
+	const [searchTerm, setSearchTerm] = useState(() => {
+		const searchParams = new URLSearchParams(window.location.search);
+		return searchParams.get("q") || "one piece";
+	});
 
-  useEffect(() => {
-    setMovies(() => searchMovies("one piece"));
-  }, []);
+	useEffect(() => {
+		searchMovies(searchTerm);
 
-  async function searchMovies(title) {
-    const movieData = await fetch(`${API_URL}&s=${title}`)
-      .then((response) => response.json())
-      .then((data) => data.Search);
+		// Clear query string after reading
+		const searchParams = new URLSearchParams(window.location.search);
+		if (searchParams.has("q")) {
+			window.history.replaceState({}, "", window.location.pathname);
+		}
+	}, []);
 
-    setMovies(movieData);
-  }
+	async function searchMovies(title) {
+		const movieData = await fetch(`${API_URL}&s=${title}`)
+			.then((response) => response.json())
+			.then((data) => data.Search);
 
-  return (
-    <div className="app">
-      <h1>MovieLand</h1>
+		setMovies(movieData);
+	}
 
-      <form
-        className="search"
-        onSubmit={(e) => {
-          e.preventDefault();
-          searchMovies(e.target.elements.searchTerm.value);
-        }}
-      >
-        <input
-          type="text"
-          name="searchTerm"
-          placeholder="Search for movies"
-          autoFocus
-        />
-        <button type="submit">
-          <img src={SearchIcon} alt="Search" />
-        </button>
-      </form>
+	return (
+		<div className="app">
+			<h1>MovieLand</h1>
 
-      <div className="container">
-        {movies?.length > 0 ? (
-          movies.map((movie) => (
-            <a
-              href={`https://www.imdb.com/title/${movie.imdbID}`}
-              target="_blank"
-              key={movie.imdbID}
-            >
-              <MovieCard key={movie.imdbID} movie={movie} />
-            </a>
-          ))
-        ) : (
-          <div className="empty">
-            <h2>No movies found</h2>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+			<form
+				className="search"
+				onSubmit={(e) => {
+					e.preventDefault();
+					searchMovies(searchTerm);
+				}}
+			>
+				<input
+					type="text"
+					name="searchTerm"
+					placeholder="Search for movies"
+					autoFocus
+					value={searchTerm}
+					onChange={(e) => setSearchTerm(e.target.value)}
+				/>
+				<button type="submit">
+					<img src={SearchIcon} alt="Search" />
+				</button>
+			</form>
+
+			<div className="container">
+				{movies?.length > 0 ? (
+					movies.map((movie) => (
+						<a
+							href={`https://www.imdb.com/title/${movie.imdbID}`}
+							target="_blank"
+							key={movie.imdbID}
+						>
+							<MovieCard key={movie.imdbID} movie={movie} />
+						</a>
+					))
+				) : (
+					<div className="empty">
+						<h2>No movies found</h2>
+					</div>
+				)}
+			</div>
+		</div>
+	);
 }

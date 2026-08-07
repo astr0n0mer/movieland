@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import SearchIcon from "./assets/search.svg";
 import "./App.css";
 
@@ -13,9 +13,10 @@ export default function App() {
 		const searchParams = new URLSearchParams(window.location.search);
 		return searchParams.get("q") || DEFAULT_MOVIE_TITLE;
 	});
+	const initialSearchTerm = useRef(searchTerm);
 
 	useEffect(() => {
-		searchMovies(searchTerm);
+		searchMovies(initialSearchTerm.current);
 
 		// Clear query string after reading
 		const searchParams = new URLSearchParams(window.location.search);
@@ -62,6 +63,7 @@ export default function App() {
 						<a
 							href={`https://www.imdb.com/title/${movie.imdbID}`}
 							target="_blank"
+							rel="noreferrer"
 							key={movie.imdbID}
 						>
 							<MovieCard key={movie.imdbID} movie={movie} />
